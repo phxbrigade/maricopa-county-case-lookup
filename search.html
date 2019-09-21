@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Maricopa County Arizona Case Search</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script>
+      function notify(msg) {
+        document.getElementById('message').innerHTML = msg
+      }
+      function search() {
+        const val = document.getElementById('search').value
+        if (!val) return
+        notify('Loading...')
+        fetch('https://e82duu0z7a.execute-api.us-west-1.amazonaws.com/dev/search', {
+          method: 'POST',
+          body: JSON.stringify({ caseId: val })
+        })
+          .then((res) => res.json())
+          .then((response) => {
+            if (!response.length) {
+              return notify('We were unable to find any records with that case number')
+            }
+            notify(response.length + ' results found')
+            const content = response.map((v) => {
+              return '<a href="' + v + '" target="_blank">' + v + '</a><br />'
+            }).join(' ')
+            document.getElementById('links').innerHTML = content
+          })
+          .catch((error) => {
+            notify('There was an error processing your request')
+          })
+      }
+    </script>
+  </head>
+  <body>
+    <div align="center" style="padding-top: 6rem;">
+      <h2>Maricopa County Arizona Case Search</h2>
+      <h2>Enter your case number</h2>
+      <h5>Hint: the case number starts with "CR"</h5>
+      <input
+        class="search-input"
+        id="search"
+        type="text"
+        placeholder="cr2019000001"
+        name="caseId" />
+      <br />
+      <br />
+      <br />
+      <div id="message"></div>
+      <div id="links"></div>
+      <br />
+      <input
+        class="search-button"
+        type="submit"
+        onsubmit="search();"
+        onclick="search();"
+        value="Search" />
+    </div>
+  </body>
+</html>

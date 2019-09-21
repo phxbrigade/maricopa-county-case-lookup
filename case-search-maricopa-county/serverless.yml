@@ -1,0 +1,17 @@
+service: case-search-maricopa-county
+provider:
+  name: aws
+  runtime: nodejs10.x
+
+# you can overwrite defaults here
+#  stage: dev
+  region: us-west-1
+
+functions:
+  search:
+    handler: handler.search
+    events:
+      - http:
+          path: 'search'
+          method: post
+          cors: true
